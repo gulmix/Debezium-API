@@ -1,0 +1,30 @@
+{
+  "name": "postgres-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "testdb",
+    "database.server.name": "dbserver1",
+    "table.include.list": "inventory.products,inventory.customers,inventory.orders,inventory.order_items",
+    "plugin.name": "pgoutput",
+    "publication.name": "dbz_publication",
+    "publication.autocreate.mode": "all_tables",
+    "slot.name": "debezium_slot",
+    "topic.prefix": "postgres",
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "$3",
+    "snapshot.mode": "initial",
+    "heartbeat.interval.ms": "10000",
+    "decimal.handling.mode": "double",
+    "time.precision.mode": "adaptive",
+    "include.schema.changes": "true",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:29092",
+    "schema.history.internal.kafka.topic": "schema-changes.inventory"
+  }
+}
