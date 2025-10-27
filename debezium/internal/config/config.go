@@ -8,9 +8,9 @@ import (
 )
 
 type Config struct {
-	Environment string        `env:"ENV" env-default:"development"`
-	Port        int           `env:"PORT" env-default:"8080"`
-	Timeout     time.Duration `env:"HTTP_TIMEOUT" env-default:"5"`
+	Environment string        `env:"ENV"               env-default:"development"`
+	Port        int           `env:"PORT"              env-default:"8080"`
+	Timeout     time.Duration `env:"HTTP_TIMEOUT"      env-default:"5"`
 	BaseURL     string        `env:"DEBEZIUM_BASE_URL" env-default:"http://localhost:8080"`
 }
 

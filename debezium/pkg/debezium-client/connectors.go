@@ -165,7 +165,11 @@ func (c *Client) DeleteConnector(ctx context.Context, name string) error {
 	return nil
 }
 
-func (c *Client) UpdateConnectorConfig(ctx context.Context, name string, config map[string]interface{}) (GetConnectorResponse, error) {
+func (c *Client) UpdateConnectorConfig(
+	ctx context.Context,
+	name string,
+	config map[string]interface{},
+) (GetConnectorResponse, error) {
 	if err := validateConnectorName(name); err != nil {
 		return GetConnectorResponse{}, err
 	}
@@ -278,7 +282,8 @@ func (c *Client) RestartConnector(ctx context.Context, name string) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
+	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK &&
+		resp.StatusCode != http.StatusAccepted {
 		var errorResponse ErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errorResponse); err != nil {
 			return fmt.Errorf("RestartConnector.DecodeError: %w", err)
@@ -340,7 +345,8 @@ func (c *Client) RestartConnectorTask(ctx context.Context, name string, taskId i
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
+	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK &&
+		resp.StatusCode != http.StatusAccepted {
 		var errorResponse ErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errorResponse); err != nil {
 			return fmt.Errorf("RestartConnectorTask.DecodeError: %w", err)

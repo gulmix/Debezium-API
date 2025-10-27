@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Server struct {
@@ -12,8 +13,9 @@ type Server struct {
 
 func NewServer(port int) *Server {
 	srv := http.Server{
-		Addr:    ":" + strconv.Itoa(port),
-		Handler: nil,
+		Addr:              ":" + strconv.Itoa(port),
+		Handler:           nil,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 	return &Server{
 		srv: &srv,

@@ -1,24 +1,20 @@
 package main
 
 import (
+	"context"
 	"debezium_server/internal/config"
-	"debezium_server/internal/repository"
-	"debezium_server/internal/service"
-	v1 "debezium_server/internal/transport/http"
-	"flag"
+	"debezium_server/pkg/logger"
 )
 
 func main() {
-	envPath := flag.String("env", ".env", "path to the environment file")
-	flag.Parse()
-	cfg, err := config.ParseConfig(*envPath)
+	//envPath := flag.String("env", ".env", "path to the environment file")
+	//flag.Parse()
+	cfg, err := config.ParseConfig("../../config/.env")
 	if err != nil {
 		return
 	}
-	up := repository.NewUserRepository()
-	us := service.NewUserService(up)
-	server := v1.NewServer(cfg.Port)
-	if err := server.Start(); err != nil {
-		return
-	}
+	lg := logger.NewLogger(cfg.Environment)
+	ctx := logger.WithRequestID(context.Background(), "12345678")
+
+	lg.Info(ctx, "starting server")
 }
