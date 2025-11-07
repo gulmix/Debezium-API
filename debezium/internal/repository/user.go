@@ -3,31 +3,55 @@ package repository
 import (
 	"context"
 	"debezium_server/internal/models"
+	"fmt"
+
+	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type UserRepository struct {
+	db      *pgxpool.Pool
+	builder squirrel.StatementBuilderType
 }
 
-func NewUserRepository() *UserRepository {
-	return &UserRepository{}
+func NewUserRepository(db *pgxpool.Pool) *UserRepository {
+	return &UserRepository{
+		db:      db,
+		builder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+	}
 }
 
-func (r *UserRepository) Select(ctx context.Context, offset, limit int) []models.User {
-	return nil
-}
+func (r *UserRepository) Select(ctx context.Context, offset, limit int) ([]models.User, error) {
+	query, args, err := r.builder.Select(
+		"id", "email", "name", "last_name", "role").
+		From("users").
+		Limit(uint64(limit)).
+		Offset(uint64(offset)).
+		ToSql()
 
-func (r *UserRepository) SelectByID(ctx context.Context, id int64) models.User {
-	return models.User{}
-}
+	if err != nil {
+		return nil, fmt.Errorf("select: %w", err)
+	}
 
-func (r *UserRepository) Insert(ctx context.Context, user models.User) error {
-	return nil
-}
+	rows, err := r.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("select: %w", err)
+	}
 
-func (r *UserRepository) Update(ctx context.Context, user models.User) error {
-	return nil
-}
+	defer rows.Close()
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.LastName, &user.Role); err != nil {
+			return nil, fmt.Errorf("select: %w", err)
+		}
 
-func (r *UserRepository) Delete(ctx context.Context, id int64) error {
-	return nil
+		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("select: %w", err)
+	}
+
+	return users, nil
 }

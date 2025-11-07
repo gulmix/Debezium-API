@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION}
+    restart: always
+    container_name: postgres_container
+    ports:
+      - ${POSTGRES_PORT}: ${POSTGRES_PORT}
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
